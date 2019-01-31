@@ -31,24 +31,16 @@ The testcase:
 using testing::Return;
 using namespace jnimock;
 
-// Declare the JNI function that wanted to be tested
 extern "C" jint Java_my_package_MyClass_myMethod(JNIEnv* env, jclass cls);
 
-// The testcase
 TEST(JNITest, GetVersion) {
-
-    // Create a JNIEnvMock object (JNIEnvMock extends JNIEnv)
-	JNIEnvMock* env = createJNIEnvMock();
-
-	EXPECT_CALL(*env, GetVersion())
+	JNIEnvMock env;
+	EXPECT_CALL(env, GetVersion())
 		.Times(1)
 		.WillOnce(Return(JNI_VERSION_1_6));
 
-	jint r = Java_my_package_MyClass_myMethod(env, NULL);
+	jint r = Java_my_package_MyClass_myMethod(&env, NULL);
 	EXPECT_EQ(r, JNI_VERSION_1_6);
-
-    // Destory the created JNIEnvMock object
-	destroyJNIEnvMock(env);
 }
 ```
 
